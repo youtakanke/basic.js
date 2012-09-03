@@ -4,14 +4,12 @@
 /**
  * ブラウザベンダーの判別
  */
-var VENDER_PREFIX = (function() {
-    var ua = navigator.userAgent;
-    if (ua.indexOf('Opera') != -1) {
-        return 'O';
-    } else if (ua.indexOf('MSIE') != -1) {
-        return 'ms';
-    } else if (ua.indexOf('WebKit') != -1) {
+var VENDER = (function() {
+    var _ua = navigator.userAgent;
+    if (_ua.indexOf('WebKit') != -1) {
         return 'webkit';
+    } else if (_ua.indexOf('Opera') != -1) {
+        return 'O';
     } else if (navigator.product == 'Gecko') {
         return 'Moz';
     } else {
@@ -25,7 +23,7 @@ var VENDER_PREFIX = (function() {
  */
 function Basic(){
 /*	var _body = document.getElementsByTagName('body')[0];
-	_body.style[VENDER_PREFIX+'UserSelect'] = 'none';*/
+	_body.style[VENDER+'UserSelect'] = 'none';*/
 }
 Basic.init=function init(obj){
 	/*
@@ -441,9 +439,9 @@ DisplayObject.prototype = {
 		var _x = this.x;
 		var _y = this.y;
 		if(value){
-			this._style[VENDER_PREFIX + 'TransformOrigin'] = _x + (this.width/2) + 'px ' + (_y + (this.height/2)) + 'px';
+			this._style[VENDER + 'TransformOrigin'] = _x + (this.width/2) + 'px ' + (_y + (this.height/2)) + 'px';
 		}*/
-		this._style[VENDER_PREFIX + 'Transform'] = this.__transformScale + ' ' + this.__transformRotation //+ ' translate(' + _x + 'px,' + _y + 'px)';
+		this._style[VENDER + 'Transform'] = this.__transformScale + ' ' + this.__transformRotation //+ ' translate(' + _x + 'px,' + _y + 'px)';
 	},
 	/**
 	 * オブジェクトのサイズ割合
@@ -790,11 +788,11 @@ Sprite.prototype = {
 				}
 			}else{
 				if(value){
-					this._style[VENDER_PREFIX + 'MaskImage'] = 'url(' + this._image.src + ')';
+					this._style[VENDER + 'MaskImage'] = 'url(' + this._image.src + ')';
 					this._style.backgroundImage = 'none';
 				}
 				else{
-					this._style[VENDER_PREFIX + 'MaskImage'] = 'none';
+					this._style[VENDER + 'MaskImage'] = 'none';
 					this._style.backgroundImage = 'url(' + this._image.src + ')';
 				}
 			}
@@ -852,9 +850,9 @@ TextField.prototype = {
 		set : function (value){
 			this._selectable = value;
 			if(value)
-				this._style[VENDER_PREFIX + 'UserSelect'] = 'text';
+				this._style[VENDER + 'UserSelect'] = 'text';
 			else
-				this._style[VENDER_PREFIX + 'UserSelect'] = 'none';
+				this._style[VENDER + 'UserSelect'] = 'none';
 		}
 	}
 }
