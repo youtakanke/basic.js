@@ -9,6 +9,7 @@ SpriteオブジェクトにSpriteオブジェクトをaddChildできる、domベ
     var _spB = new Sprite();
     _spA.addChild(_spB);
 これによって生成されるdom↓
+
     <div>            <!-- _spA -->
        <div></div>   <!-- _spB -->
     </div>
