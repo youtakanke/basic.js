@@ -1,5 +1,11 @@
-/**
- * @author kanke_yota
+/*! 
+ * Basic.js JavaScript Library v1.0.0 
+ * 
+ * Copyright 2012, k-factory, yota kanke 
+ * Dual licensed under the MIT or GPL Version 2 licenses. 
+ * https://github.com/youtakanke/basic.js 
+ * 
+ * Blog http://kf-plvs-vltra.com/blog/
  */
 /**
  * ブラウザベンダーの判別
@@ -8,10 +14,10 @@ var VENDER = (function() {
     var _ua = navigator.userAgent;
     if (_ua.indexOf('WebKit') != -1) {
         return 'webkit';
-    } else if (_ua.indexOf('Opera') != -1) {
-        return 'O';
     } else if (navigator.product == 'Gecko') {
         return 'Moz';
+    } else if (_ua.indexOf('Opera') != -1) {
+        return 'O';
     } else {
         return '';
     }
