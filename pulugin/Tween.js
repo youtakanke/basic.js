@@ -50,7 +50,7 @@ Tween.prototype = {
 
 		t /= d;
 		t = t - 1;
-		this.target[index] =  c*(t*t*t + 1) + b;//-c*t*(t-2) + b;
+		this.target[index] =  c*(t*t*t + 1) + b;
 	},
 	easein:function(index){
 		var t = this._count;
@@ -175,8 +175,5 @@ Tween.prototype = {
 		delete _self._nID;
 		clearInterval(_self._nHackID);
 		delete _self._nHackID;
-	},
-	finish:function(){
-
 	}
 }
