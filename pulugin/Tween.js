@@ -1,6 +1,11 @@
-/**
- * @author kanke_yota
+/*! 
+ * Basic.js JavaScript Library v1.0.0 
  * 
+ * Copyright 2012, k-factory, yota kanke 
+ * Dual licensed under the MIT or GPL Version 2 licenses. 
+ * https://github.com/youtakanke/basic.js 
+ * 
+ * Blog http://kf-plvs-vltra.com/blog/
  */
 function Tween(displayObject,easing,duration,propertyObj,callback,callbackobj){
 	Basic.init(this).extend(EventDispatcher);
