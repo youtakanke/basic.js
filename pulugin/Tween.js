@@ -7,16 +7,16 @@
  * 
  * Blog http://kf-plvs-vltra.com/blog/
  */
-function Tween(displayObject,easing,duration,propertyObj,callback,callbackobj){
+function Tween(elem,easing,duration,obj,callback,callbackobj){
 	Basic.init(this).extend(EventDispatcher);
-	this.initialize(displayObject,easing,duration,propertyObj,callback,callbackobj);
+	this.initialize(elem,easing,duration,obj,callback,callbackobj);
 }
 Tween.prototype = {
-	initialize:function(displayObject,easing,duration,propertyObj,callback,callbackobj){
+	initialize:function(elem,easing,duration,obj,callback,callbackobj){
 		this._nowObj = {};
-		this.target = displayObject;
+		this.target = elem;
 		this._firstObj = {}
-		for(var _index in propertyObj){
+		for(var _index in obj){
 			this._firstObj[_index] = this.target[_index];
 		}
 		this._easing = easing;
@@ -24,8 +24,8 @@ Tween.prototype = {
 		this._duration=duration;
 		this._callback = callback;
 		this._callbackobj = callbackobj;
-		for(var index in propertyObj){
-			this[index](propertyObj[index]);
+		for(var index in obj){
+			this[index](obj[index]);
 		}
 		this._fps = stage.fps;
 	},
@@ -37,35 +37,30 @@ Tween.prototype = {
 		var _sa = _n-this._nowObj[index];
 		this.target[index] += _sa * (this._frameTime/(this._duration*1000));
 	},
-	ease:function(index){
-		var _n = this._changeObj[index];
-		var _sa = _n-this._nowObj[index];
-		this.target[index] += _sa * (this._frameTime/(this._duration*1000));
-	},
 	easeout:function(index){
 		var t = this._count;
 		var b = this._firstObj[index];
 		var c = this._changeObj[index] - b;
-		var d = (this._duration*1000)/this._fps;
-
+		var d = this._duration*this._fps;
+		
 		t /= d;
-		t = t - 1;
-		this.target[index] =  c*(t*t*t + 1) + b;
+		t -= 1;
+		this.target[index] =  (c*(t*t*t + 1)) + b;
 	},
 	easein:function(index){
 		var t = this._count;
 		var b = this._firstObj[index];
 		var c = this._changeObj[index]-b;
-		var d = (this._duration*1000)/this._fps;
+		var d = this._duration*this._fps;
 
 		t /= d;
-		this.target[index] = c*t*t+b;
+		this.target[index] = c*t*t*t+b;
 	},
 	easeinout:function(index){
 		var t = this._count;
 		var b = this._firstObj[index];
 		var c = this._changeObj[index]-b;
-		var d = (this._duration*1000)/this._fps;
+		var d = this._duration*this._fps;
 
 		this.target[index] = -c/2.0 * (Math.cos(Math.PI*t/d) - 1) + b
 	},
@@ -82,9 +77,10 @@ Tween.prototype = {
 		this._changeObj.alpha = value;
 	},
 	scale:function(value){
-		this._nowObj.scale = this.target.scale;
-		this._changeObj.scale = value;
-
+		this._nowObj.scaleX = this.target.scaleX;
+		this._nowObj.scaleY = this.target.scaleY;
+		this._changeObj.scaleX = value;
+		this._changeObj.scaleY = value;
 	},
 	rotation:function(value){
 		this._nowObj.rotation = this.target.rotation;
@@ -109,16 +105,15 @@ Tween.prototype = {
 	callback:function(func){
 		this._callback = func;
 	},
-	start:function(delay){
+	start:function(playTime){
 		var _self = this;
 		var _timeLineLength = this._duration*stage.fps;
 		var _count = 0;
-		if(delay==undefined) delay = 0;
+		if(playTime==undefined) playTime = 0;
 		
 		_self._count = _count;
-		this._frameTime = 1000/stage.fps;
-
-		_self.safariScaleHack(_timeLineLength,delay);
+		this._frameTime = Math.round(1000/stage.fps);
+		_self.safariScaleHack(_timeLineLength,playTime);
 		
 		setTimeout(function(){
 			_self._nID = setInterval(function(){
@@ -132,19 +127,19 @@ Tween.prototype = {
 						_self._callbackobj[_self._callback](_self.target);
 				}else{
 					for(var index in _self._changeObj){
-						if(index.indexOf('scale')==-1 && index.indexOf('rotation')==-1){
+						if(index.indexOf('scale')==-1){
 							_self[_self._easing](index);
 						}
 					}
 				}
 				_self._count = _count;
 			},_self._frameTime);
-		},delay)
+		},playTime)
 	},
 	/**
 	 * safariはなぜかscaleとそれ以外のアニメーション処理を同一の関数内で行うと、バグるので
 	 */
-	safariScaleHack : function(_timeLineLength,delay){
+	safariScaleHack : function(_timeLineLength,playTime){
 		var _self = this;
 		var _count = 0;
 		setTimeout(function(){
@@ -152,7 +147,7 @@ Tween.prototype = {
 				_count++;
 				if(_count < _timeLineLength){
 					for(var index in _self._changeObj){
-						if(index.indexOf('scale')>=0 || index.indexOf('rotation')>=0){
+						if(index.indexOf('scale')!=-1){
 							_self[_self._easing](index);
 							//trace(_count,index,_self.target[index])
 						}
@@ -166,7 +161,7 @@ Tween.prototype = {
 					}
 				}
 			},_self._frameTime);
-		},delay)
+		},playTime)
 
 	},
 	stop:function(){
@@ -175,5 +170,8 @@ Tween.prototype = {
 		delete _self._nID;
 		clearInterval(_self._nHackID);
 		delete _self._nHackID;
+	},
+	finish:function(){
+
 	}
 }
