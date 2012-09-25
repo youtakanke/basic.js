@@ -7,6 +7,7 @@
  * 
  * Blog http://kf-plvs-vltra.com/blog/
  */
+
 /**
  * ブラウザベンダーの判別
  */
@@ -42,7 +43,7 @@ Basic.init=function init(obj){
  		obj.__proto__[i]=_b[i];
 	}
 	var _cn =  obj.__proto__;
-	
+
 	var getSetFlag = false;
 	var totalgetSetFlag = false;
  	for (var i in _cn){
@@ -56,7 +57,7 @@ Basic.init=function init(obj){
 	        	//_cn.__defineSetter__(i, _cn[i].set);
 	        	getSetFlag = true;
 	        }
-	        
+
 	        if(getSetFlag){
 	        	totalgetSetFlag = true;
 	        	//Basic.SetterAndGetterEscape.prototype[i] = _cn[i];
@@ -103,10 +104,10 @@ Basic.prototype={
 		    }catch(e){
 		    	//trace('_cn[i] value', _cn[i]);
 		    }
-	 		
+
 		}
 		Basic.SetterAndGetterEscape.prototype = {};
-		
+
 		//オーバーライドがある場合のための措置
 	 	for (var index in _proto){
 	 		this.__proto__[index]=_proto[index];
@@ -115,7 +116,7 @@ Basic.prototype={
  		this.__serialID = this.___serialID();
 		//自身が継承されていることを知らせるflag
 		this.extendsFlag=true;
-		
+
 		//
 		if(clasName==Sprite){
 			this.extend(DisplayObject);
@@ -172,7 +173,7 @@ EventDispatcher.prototype={
 			this.__onEnterFrame__();
 		}
 		//mouseイベント系はこっちで
-		if(handler=='touchend'||handler=='touchmove'||handler=='click' || handler == 'mousemove' || handler == 'mouseover'|| handler == 'mousedown'){
+		if(handler=='touchend'||handler=='touchstart'||handler=='touchmove'||handler=='click' || handler == 'mousemove' || handler == 'mouseover'|| handler == 'mousedown'){
 			this._element.__this = this;
 			this._element.__obj = bindObj;
 			this._element.__handler = handler;
@@ -223,7 +224,7 @@ EventDispatcher.prototype={
 				_ar.handler.splice(_rc,1);
 				_ar.method.splice(_rc,1);
 				//mouseイベント系はこっちで
-				if(handler=='touchend'||handler=='touchmove'||handler=='click' || handler == 'mousemove' || handler == 'mouseover'|| handler == 'mousedown'){
+				if(handler=='touchend'||handler=='touchstart'||handler=='touchmove'||handler=='click' || handler == 'mousemove' || handler == 'mouseover'|| handler == 'mousedown'){
 					this._element.removeEventListener(handler ,this.__mouseAndTouchHandler,true);
 				}
 			}
@@ -347,7 +348,7 @@ DisplayObject.prototype = {
 	id : {
 		get : function(){
 			if(!this._element.id)this._element.id='';
-			
+
 			return this._element.id;
 		},
 		/**
@@ -357,7 +358,7 @@ DisplayObject.prototype = {
 		set : function(value){
 			this._element.id = value;
 		}
-		
+
 	},
     /**
      * div(HTMLDocument)のclassにひもづく
@@ -366,13 +367,13 @@ DisplayObject.prototype = {
 	className : {
 		get : function(){
 			if(!this._element.className)this._element.className='';
-			
+
 			return this._element.className;
 		},
 		set : function(value){
 			this._element.className = value;
 		}
-		
+
 	},
 	/**
 	 * オブジェクトのx座標
@@ -633,6 +634,7 @@ DisplayObject.prototype = {
 	 */
 	addChild:function(displayObject){
 		try{
+			displayObject._style[VENDER+'UserSelect'] = 'none';
 			this._element.appendChild(displayObject._element);
 		}catch(e){
 			var _e = document.getElementById(this._element.id);
@@ -641,7 +643,7 @@ DisplayObject.prototype = {
 		}
 		if(this._scene)
 			displayObject._scene = this._scene;
-		
+
 		displayObject.parent = this;
 		this._children.push(displayObject);
 	},
@@ -707,7 +709,7 @@ DisplayObject.prototype = {
 	__clear__ : function(){
 		var _ar = this._children;
 		try{
-			
+
 			for (var i=0; i < _ar.length; i++) {
 				if(_ar[i]._scene != undefined){
 					if(this._scene==_ar[i]._scene){
@@ -890,7 +892,7 @@ function Stage(w,h){
 	this._element.style.overflow ='hidden';
 	this.width = w;
 	this.height = h;
-	
+
 	this.__onloadFlag = false;
 }
 /**
@@ -924,7 +926,7 @@ Stage.prototype = {
 	 * 
 	 */
 	popScene : function(){
-		
+
 	},
 	/**
 	 * 登録されているシーンから削除する
@@ -940,7 +942,7 @@ Stage.prototype = {
 		scene.__clear__();
 		scene = null;
 		delete scene;
-		
+
 	},
 	/**
 	 * preloadされた画像を格納しておく配列
@@ -993,7 +995,7 @@ Stage.prototype = {
 	 * 
 	 */
 	start : function(){
-		
+
 	}
 
 }
@@ -1038,6 +1040,7 @@ Scene.prototype = {
 	 * @param {displayObject} displayObject
 	 */
 	addChild:function(displayObject){
+		displayObject._style[VENDER+'UserSelect'] = 'none';
 		this._element.appendChild(displayObject._element);
 		displayObject.parent = this;
 		displayObject._scene = this;
@@ -1078,7 +1081,7 @@ Scene.prototype = {
 		}
 		displayObject._scene = null;
 		delete displayObject._scene;
-		
+
 	}
 }
 
@@ -1179,7 +1182,7 @@ Basic.Ajax = function(data, method, fileName, async, callback, callbackObj) {
 			//コールバック
 			var _type = req.getResponseHeader('Content-Type') || '';
 			if (_type.match(/^image/)) {
-				
+
 			}
 			if(typeof callback != 'string')
 				callback(req.responseText,req.param);
@@ -1188,7 +1191,7 @@ Basic.Ajax = function(data, method, fileName, async, callback, callbackObj) {
 			}
 		}
 	}
-	
+
 	var _param = '';
 	for(var key in data){
 		if(_param != '')_param += '&';
@@ -1243,14 +1246,14 @@ function FpsView(){
 FpsView.prototype={
 	init:function(){
 		var stats = new Stats();
-		
+
 		// Align top-left
 		stats.getDomElement().style.position = 'absolute';
 		stats.getDomElement().style.left = '0px';
 		stats.getDomElement().style.top = '0px';
-		
+
 		stage._element.appendChild( stats.getDomElement() );
-		
+
 		setInterval( function () {
 		   stage.rialTimeFps = stats.update();
 		}, 1000 / this._fr );
