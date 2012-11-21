@@ -18,6 +18,10 @@ Tween.prototype = {
 		this._firstObj = {}
 		for(var _index in obj){
 			this._firstObj[_index] = this.target[_index];
+			if(_index == 'scale'){
+				this._firstObj['scaleX'] = this.target['scaleX'];
+				this._firstObj['scaleY'] = this.target['scaleY'];
+			}
 		}
 		this._easing = easing;
 		this._changeObj = {};
