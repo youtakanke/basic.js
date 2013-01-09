@@ -79,7 +79,12 @@ Basic.prototype={
 		this.__proto__ = Object.create(_cn.__proto__,this.__proto__)
 		clasName.apply(this);
 		*/
+		Basic.extendCount = Basic.extendCount || 0;
+		Basic.extendCount += 1;
+		var _ec = Basic.extendCount;
+
 		var _cn =  new clasName();
+		
 	 	var _self = this;
 	 	var _proto = {};
 	 	//自身の__proto__を逃がしておく
@@ -92,14 +97,16 @@ Basic.prototype={
 	 		this.__proto__[i]=_cn[i];
 	 		Basic.SetterAndGetterEscape.prototype[i] = clasName.prototype[i];
 	 	}
-	 	_cn = Basic.SetterAndGetterEscape.prototype;
+	 	var _cn2 = Basic.SetterAndGetterEscape.prototype;
 	 	for (var i in _cn){
 	        try{
-		        if (_cn[i].get!=undefined){
-		        	this.__defineGetter__(i, _cn[i].get);
+		        if (_cn2[i].get!=undefined){
+		        	Basic.__getter__ = _cn2.get;
+		        	//this.__defineGetter__(i, _cn2[i].get);
 		        }
-		        if (_cn[i].set!=undefined){
-		        	this.__defineSetter__(i, _cn[i].set);
+		        if (_cn2[i].set!=undefined){
+		        	Basic.__setter__ = _cn2.set;
+		        	//this.__defineSetter__(i, _cn2[i].set);
 		        }
 		    }catch(e){
 		    	//trace('_cn[i] value', _cn[i]);
@@ -116,10 +123,27 @@ Basic.prototype={
  		this.__serialID = this.___serialID();
 		//自身が継承されていることを知らせるflag
 		this.extendsFlag=true;
-
+		
+		if( _ec == Basic.extendCount){
+    		for (var i in _cn){
+    	        try{
+    		        if (_cn2[i].get!=undefined){
+    		        	this.__defineGetter__(i, _cn2[i].get);
+    		        }
+    		        if (_cn2[i].set!=undefined){
+    		        	this.__defineSetter__(i, _cn2[i].set);
+    		        }
+    		    }catch(e){
+    		    	//trace('_cn[i] value', _cn[i]);
+    		    }
+    
+    		}
+           	Basic.__getter__ = null;
+           	Basic.__getter__ = null;
+        }
 		//
 		if(clasName==Sprite){
-			this.extend(DisplayObject);
+			//this.extend(DisplayObject);
 			this._element = new this.createElement('div');
 			this._style.position = 'absolute';
 		}
