@@ -145,6 +145,7 @@ Basic.prototype={
     		}
            	Basic.__getter__ = {};
            	Basic.__setter__ = {};
+           	Basic.extendCount = 0;
         }
 		//
 		if(clasName==Sprite){
