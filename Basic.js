@@ -79,6 +79,8 @@ Basic.prototype={
 		this.__proto__ = Object.create(_cn.__proto__,this.__proto__)
 		clasName.apply(this);
 		*/
+		Basic.__getter__ = Basic.__getter__ || {};
+		Basic.__setter__ = Basic.__setter__ || {};
 		Basic.extendCount = Basic.extendCount || 0;
 		Basic.extendCount += 1;
 		var _ec = Basic.extendCount;
@@ -101,11 +103,11 @@ Basic.prototype={
 	 	for (var i in _cn){
 	        try{
 		        if (_cn2[i].get!=undefined){
-		        	Basic.__getter__ = _cn2.get;
+		        	Basic.__getter__[i].get = _cn2[i].get;
 		        	//this.__defineGetter__(i, _cn2[i].get);
 		        }
 		        if (_cn2[i].set!=undefined){
-		        	Basic.__setter__ = _cn2.set;
+		        	Basic.__setter__[i].set = _cn2[i].set;
 		        	//this.__defineSetter__(i, _cn2[i].set);
 		        }
 		    }catch(e){
@@ -125,21 +127,21 @@ Basic.prototype={
 		this.extendsFlag=true;
 		
 		if( _ec == Basic.extendCount){
-    		for (var i in _cn){
+    		for (var i in Basic.__getter__){
     	        try{
-    		        if (_cn2[i].get!=undefined){
-    		        	this.__defineGetter__(i, _cn2[i].get);
+    		        if (Basic.__getter__[i].get!=undefined){
+    		        	this.__defineGetter__(i, Basic.__getter__[i].get);
     		        }
-    		        if (_cn2[i].set!=undefined){
-    		        	this.__defineSetter__(i, _cn2[i].set);
+    		        if (Basic.__setter__[i].set!=undefined){
+    		        	this.__defineSetter__(i, Basic.__setter__[i].set);
     		        }
     		    }catch(e){
     		    	//trace('_cn[i] value', _cn[i]);
     		    }
     
     		}
-           	Basic.__getter__ = null;
-           	Basic.__getter__ = null;
+           	Basic.__getter__ = {};
+           	Basic.__setter__ = {};
         }
 		//
 		if(clasName==Sprite){
