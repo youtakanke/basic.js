@@ -81,13 +81,10 @@ Basic.prototype={
 		*/
 		Basic.__getter__ = Basic.__getter__ || {};
 		Basic.__setter__ = Basic.__setter__ || {};
-		Basic.extendCount = Basic.extendCount || 0;
-		
-		Basic.extendCount += 1;
-		var _ec = Basic.extendCount;
+		Basic.__nowClass = clasName;
+		var _ec = clasName;
 
 		var _cn =  new clasName();
-		var _ec2 = Basic.extendCount;
 
 	 	var _self = this;
 	 	var _proto = {};
@@ -128,7 +125,7 @@ Basic.prototype={
 		//自身が継承されていることを知らせるflag
 		this.extendsFlag=true;
 		
-		if( _ec == _ec2){
+		if( _ec == Basic.__nowClass){
     		for (var i in Basic.__getter__){
     	        try{
    		        	this.__defineGetter__(i, Basic.__getter__[i]);
