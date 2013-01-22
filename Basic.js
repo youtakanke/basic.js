@@ -80,29 +80,40 @@ Basic.prototype={
 		clasName.apply(this);
 		*/
 		var _cn =  new clasName();
-	 	var _self = this;
-	 	var _proto = {};
-	 	//自身の__proto__を逃がしておく
-	 	for ( var i in this.__proto__){
-	 		 _proto[i] = this.__proto__[i];
-	 		 Basic.SetterAndGetterEscape.prototype[i] = this.__proto__[i];
-	 	}
-	 	//継承元のprototypeを自身に追加する
-	 	for (var i in _cn){
-	 		this.__proto__[i]=_cn[i];
-	 		Basic.SetterAndGetterEscape.prototype[i] = clasName.prototype[i];
-	 	}
-	 	_cn = Basic.SetterAndGetterEscape.prototype;
-	 	for (var i in _cn){
-	        try{
-		        if (_cn[i].get!=undefined){
-		        	this.__defineGetter__(i, _cn[i].get);
-		        }
-		        if (_cn[i].set!=undefined){
-		        	this.__defineSetter__(i, _cn[i].set);
-		        }
+		var _self = this;
+		var _proto = {};
+		//自身の__proto__を逃がしておく
+		for ( var i in this.__proto__){
+			 _proto[i] = this.__proto__[i];
+			 Basic.SetterAndGetterEscape.prototype[i] = this.__proto__[i];
+		}
+		//継承元のprototypeを自身に追加する
+		for (var i in _cn){
+			this.__proto__[i]=_cn[i];
+			Basic.SetterAndGetterEscape.prototype[i] = clasName.prototype[i];
+		}
+		var _cn2 = Basic.SetterAndGetterEscape.prototype;
+		for (var i in _cn2){
+			try{
+				if(_cn.__lookupGetter__(i)){
+					var _g = _cn.__lookupGetter__(i);
+					this.__defineGetter__(i, _g);
+					this.__proto__[i] = null;
+					delete this.__proto__[i];
+				}
+				if(_cn.__lookupSetter__(i)){
+					var _s = _cn.__lookupSetter__(i);
+					this.__defineSetter__(i, _s);
+					this.__proto__[i] = null;
+					delete this.__proto__[i];
+				}
+				if (_cn2[i].get!=undefined){
+					this.__defineGetter__(i, _cn2[i].get);
+				}
+				if (_cn2[i].set!=undefined){
+					this.__defineSetter__(i, _cn2[i].set);
+				}
 		    }catch(e){
-		    	//trace('_cn[i] value', _cn[i]);
 		    }
 
 		}
@@ -117,9 +128,7 @@ Basic.prototype={
 		//自身が継承されていることを知らせるflag
 		this.extendsFlag=true;
 
-		//
-		if(clasName==Sprite){
-			this.extend(DisplayObject);
+		if(this._element){
 			this._element = new this.createElement('div');
 			this._style.position = 'absolute';
 		}
@@ -576,7 +585,8 @@ DisplayObject.prototype = {
 		 * @param {String} value　画像のパスをセット
 		 */
 		set : function(value){
-			this._image={}
+			this._image={};
+			var _imgFlag = false;
 			for(var i=0;i<stage.assets.length;i++){
 				if(stage.assets[i].key == value){
 					var _base64 = stage.assets[i].base64;
@@ -603,7 +613,11 @@ DisplayObject.prototype = {
 						_s._image.height = _image.height;
 					}
 					this._style.backgroundImage = 'url(' + _image.src +')';
+					_imgFlag = true;
 				}
+			}
+			if(!_imgFlag){
+				console.warn("not match image path = ",value);
 			}
 			//this._style.backgroundImage = 'url('+ value +')';
 			//this._image = this._style.backgroundImage;
@@ -921,6 +935,7 @@ Stage.prototype = {
 		scene._element.className = scene._sceneName;
 		this.addChild(scene);
 		scene.start();
+		scene.__start__();
 	},
 	/**
 	 * 
@@ -1020,10 +1035,12 @@ function Scene(name){
 Scene.number = 0;
 Scene.prototype = {
 	/**
-	 * 
+	 * over ride されるメソッド
 	 */
 	start : function(){
 		trace(this._sceneName ,"start()")
+	},
+	__start__ : function(){
 		this.ENTER_FRAME = 'enterframe';
 	},
 	/**
