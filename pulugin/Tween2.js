@@ -12,12 +12,12 @@
  * @param elem {displayObject} tweenをかけたいdisplayObject
  * @param loopFlag = false {boolean} ループさせたいか否か。初期値はfalse
  */
-function Tween2(elem, loopFlag){//},easing,duration,obj,callback,callbackobj){
+function Tween2(elem, loopFlag){
 	Basic.init(this).extend(EventDispatcher);
-	this.initialize(elem, loopFlag)//,easing,duration,obj,callback,callbackobj);
+	this.initialize(elem, loopFlag)
 }
 Tween2.prototype = {
-	initialize:function(elem, loopFlag){//,easing,duration,obj,callback,callbackobj){
+	initialize:function(elem, loopFlag){
 		this._loopFlag = loopFlag || false;
 		this._nowObj = {};
 		this.target = elem;
